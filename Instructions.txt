@@ -1,0 +1,107 @@
+#https://cloud.google.com/iam/docs/create-short-lived-credentials-direct#rest_2
+
+
+
+gcloud iam service-accounts add-iam-policy-binding '403157937476-compute@developer.gserviceaccount.com' \
+    --member='user:binu.varghese@xxx.com' --role=roles/iam.serviceAccountTokenCreator --format=json
+
+gcloud auth login 'user:binu.varghese@xxx.com'
+
+gcloud auth print-access-token --impersonate-service-account='403157937476-compute@developer.gserviceaccount.com' 
+
+gcloud auth print-identity-token --impersonate-service-account='403157937476-compute@developer.gserviceaccount.com'  --audiences="https://helloworld-vtyatvjjvq-uk.a.run.app"
+
+curl -v -X GET  https://helloworld-vtyatvjjvq-uk.a.run.app  -H "Authorization: bearer $(gcloud auth print-identity-token)"
+
+
+➜  react-flask-app git:(main) ✗ curl -v -X GET  https://helloworld-vtyatvjjvq-uk.a.run.app  -H "Authorization: bearer $(gcloud auth print-identity-token --impersonate-service-account='403157937476-compute@developer.gserviceaccount.com'  --audiences='https://helloworld-vtyatvjjvq-uk.a.run.app')"
+
+WARNING: This command is using service account impersonation. All API calls will be executed as [403157937476-compute@developer.gserviceaccount.com].
+Note: Unnecessary use of -X or --request, GET is already inferred.
+*   Trying 216.239.36.53:443...
+* Connected to helloworld-vtyatvjjvq-uk.a.run.app (216.239.36.53) port 443 (#0)
+* ALPN, offering h2
+* ALPN, offering http/1.1
+* successfully set certificate verify locations:
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (OUT), TLS handshake, Client hello (1):
+* (304) (IN), TLS handshake, Server hello (2):
+* (304) (IN), TLS handshake, Unknown (8):
+* (304) (IN), TLS handshake, Certificate (11):
+* (304) (IN), TLS handshake, CERT verify (15):
+* (304) (IN), TLS handshake, Finished (20):
+* (304) (OUT), TLS handshake, Finished (20):
+* SSL connection using TLSv1.3 / AEAD-AES256-GCM-SHA384
+* ALPN, server accepted to use h2
+* Server certificate:
+*  subject: CN=*.a.run.app
+*  start date: Mar  2 04:19:29 2023 GMT
+*  expire date: May 25 04:19:28 2023 GMT
+*  subjectAltName: host "helloworld-vtyatvjjvq-uk.a.run.app" matched cert's "*.a.run.app"
+*  issuer: C=US; O=Google Trust Services LLC; CN=GTS CA 1C3
+*  SSL certificate verify ok.
+* Using HTTP2, server supports multiplexing
+* Connection state changed (HTTP/2 confirmed)
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* Using Stream ID: 1 (easy handle 0x7fdffa80ce00)
+> GET / HTTP/2
+> Host: helloworld-vtyatvjjvq-uk.a.run.app
+> user-agent: curl/7.79.1
+> accept: */*
+> authorization: bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Ijk4NmVlOWEzYjc1MjBiNDk0ZGY1NGZlMzJlM2U1YzRjYTY4NWM4OWQiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOiJodHRwczovL2hlbGxvd29ybGQtdnR5YXR2amp2cS11ay5hLnJ1bi5hcHAiLCJhenAiOiIxMDU5NDY0MzQ0NDI5NDYzODAzMTUiLCJleHAiOjE2Nzk2MzA2OTcsImlhdCI6MTY3OTYyNzA5NywiaXNzIjoiaHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tIiwic3ViIjoiMTA1OTQ2NDM0NDQyOTQ2MzgwMzE1In0.cMvZjjvap_Iro5dq7FeUL0jAMY_SXoGjA8dEBFFPa7tslzxVyRE6jzfzoNsUsc0rAJ_m495i-VM1i4WFMpnVFT0n4plAQ18Z60eLaLvETlkO0eT91APiboShjQYxqh47A9aLGZI_LQISBZTRrUHTlhhKmkzPbHaa7ml4_1GlqJsgVoKizIk7hrmi_fnqFU-IMa5qdcE8uI0oYxHRFGklEK2wLf1m7GLzSXv4sQJlWQtMaF6oWjpj7iS9S9PlyXWbfdlSKK2Nu4mkIPLQ-4CXBeGeJn1oU87E4WFJmd5q0UStV3gDt6olA7LCadoOKJZLT2dz5dKTZw6rhwANo6r51g
+>
+< HTTP/2 200
+< content-type: text/html; charset=utf-8
+< x-cloud-trace-context: 7f9d6c59d8041766e6c1858fa0cd75f7
+< date: Fri, 24 Mar 2023 03:05:00 GMT
+< server: Google Frontend
+< content-length: 12
+< alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000,h3-Q050=":443"; ma=2592000,h3-Q046=":443"; ma=2592000,h3-Q043=":443"; ma=2592000,quic=":443"; ma=2592000; v="46,43"
+<
+* Connection #0 to host helloworld-vtyatvjjvq-uk.a.run.app left intact
+Hello World!%
+➜  react-flask-app git:(main) ✗
+
+
+
+
+
+=====
+Misc Ignore
+
+
+
+
+
+gcloud iam service-accounts add-iam-policy-binding PRIV_SA \
+    --member=user:CALLER_ACCOUNT --role=roles/iam.serviceAccountOpenIdTokenCreator --format=json
+
+
+POST https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/PRIV_SA:generateIdToken
+{
+  "audience": "AUDIENCE_NAME",
+  "includeEmail": "true"
+}
+
+curl -v -X POST https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/403157937476-compute%40developer.gserviceaccount.com:generateIdToken \
+{ \
+  "audience": "https://helloworld-vtyatvjjvq-uk.a.run.app", \
+  "includeEmail": "true" \
+}
+
+curl -v -X POST \
+-H "Authorization: Bearer "$(gcloud auth application-default print-access-token) \ 
+-H "Content-Type: application/json; charset=utf-8" \ 
+-d @Documents/request.json \ 
+https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/content-uploader@kol-hatorah-kulah.iam.gserviceaccount.com:generateAccessToken
+
+gcp-edplcef-3-s-all-pz51
+
+
+curl --request POST   
+'https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/403157937476-compute%40developer.iam.gserviceaccount.com:generateAccessToken'   --header "Authorization: Bearer `gcloud auth  print-access-token`"   --header 'Accept: application/json'  --header 'Content-Type: application/json'  --data '{"lifetime":"4000s","scope":["https://www.googleapis.com/auth/cloud-platform"]}' 
+{
+  "accessToken": "ya29.c.Kr...",
+  "expireTime": "2021-08-26T00:57:30Z"
+}
